@@ -3,6 +3,43 @@
 
 #include <Arduino.h>
 
+#define CACHE_SIZE  32 //Keep this as a power of 2 to avoid using modulo
+
+#define ADDRESS_BITS  16
+#define DATA_BITS     16
+
+#define ADDRESS_EXPANDERS   (ADDRESS_BITS / EXPANDER_WIDTH)
+#define ADDRESS_BYTES       (ADDRESS_BITS / 8)
+#define DATA_EXPANDERS      (DATA_BITS / EXPANDER_WIDTH)
+#define DATA_BYTES          (DATA_BITS / 8)
+
+#if ADDRESS_BYTES > 8
+#error "Address bus too large"
+#elif ADDRESS_BYTES > 4
+#define ADDRESS_BUS_TYPE uint64_t
+#elif ADDRESS_BYTES > 2
+#define ADDRESS_BUS_TYPE uint32_t
+#elif ADDRESS_BYTES > 1
+#define ADDRESS_BUS_TYPE uint16_t
+#else
+#define ADDRESS_BUS_TYPE uint8_t
+#endif
+
+#if DATA_BYTES > 8
+#error "Data bus too large"
+#elif DATA_BYTES > 4
+#define DATA_BUS_TYPE uint64_t
+#elif DATA_BYTES > 2
+#define DATA_BUS_TYPE uint32_t
+#elif DATA_BYTES > 1
+#define DATA_BUS_TYPE uint16_t
+#else
+#define DATA_BUS_TYPE uint8_t
+#endif
+
+#define ADDRESS_EXP_OFFSET  0x00
+#define DATA_EXP_OFFSET     0x04
+
 void MemInterface_Init();
 
 void MemInterface_SetRead(bool high);
