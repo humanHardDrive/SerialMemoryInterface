@@ -33,16 +33,17 @@ DATA_BUS_TYPE GetData(ADDRESS_BUS_TYPE address)
     l_WaitingForMemory = false;
     return l_DataCache[address - l_CacheStartAddress];
   }
-  else if(!l_WaitingForMemory)
+  else if(!l_WaitingForMemory) //Have to request it from the host
   {
-    if(l_CacheDirty)
+    if(l_CacheDirty) //Write back any changes made
       Commander_WriteMemory(address, l_DataCache, DATA_BYTES);
 
+    //Request new memory
     Commander_RequestMemory(address, DATA_BYTES);
 
     l_WaitingForMemory = true;
 
-    return 0;
+    return 0; //This value ultimately doesn't matter
   }
 }
 
@@ -145,10 +146,13 @@ void MemInterface_Background()
     }
   }
 
+  //Has the current address been serviced?
   if(l_LastReqAddress != CurrentAddress)
   {
+    //Need to check if this is read or write
     DATA_BUS_TYPE data = GetData(CurrentAddress);
 
+    //Don't put data that isn't available
     if(!l_WaitingForMemory)
     {
       PutData(data);

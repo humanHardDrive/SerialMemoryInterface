@@ -9,4 +9,7 @@ void setup()
 void loop() 
 {
   MemInterface_Background();
+
+  if(Serial.available())
+    Commander_Background((uint8_t)Serial.read());
 }

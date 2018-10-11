@@ -22,3 +22,9 @@ void Commander_WriteMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len)
   Serial.write(PACKET_ETX);
 }
 
+
+void Commander_Background(uint8_t c)
+{
+  
+}
+
