@@ -8,9 +8,9 @@
 #define ADDRESS_BITS  16
 #define DATA_BITS     16
 
-#define ADDRESS_EXPANDERS   (ADDRESS_BITS / EXPANDER_WIDTH)
+#define ADDRESS_EXPANDERS   (ADDRESS_BITS / EXPANDER_WIDTH) //This is wrong
 #define ADDRESS_BYTES       (ADDRESS_BITS / 8)
-#define DATA_EXPANDERS      (DATA_BITS / EXPANDER_WIDTH)
+#define DATA_EXPANDERS      (DATA_BITS / EXPANDER_WIDTH) //So is this
 #define DATA_BYTES          (DATA_BITS / 8)
 
 #if ADDRESS_BYTES > 8
@@ -19,10 +19,8 @@
 #define ADDRESS_BUS_TYPE uint64_t
 #elif ADDRESS_BYTES > 2
 #define ADDRESS_BUS_TYPE uint32_t
-#elif ADDRESS_BYTES > 1
-#define ADDRESS_BUS_TYPE uint16_t
 #else
-#define ADDRESS_BUS_TYPE uint8_t
+#define ADDRESS_BUS_TYPE uint16_t
 #endif
 
 #if DATA_BYTES > 8
@@ -31,10 +29,8 @@
 #define DATA_BUS_TYPE uint64_t
 #elif DATA_BYTES > 2
 #define DATA_BUS_TYPE uint32_t
-#elif DATA_BYTES > 1
-#define DATA_BUS_TYPE uint16_t
 #else
-#define DATA_BUS_TYPE uint8_t
+#define DATA_BUS_TYPE uint16_t
 #endif
 
 #define ADDRESS_EXP_OFFSET  0x00
@@ -44,6 +40,8 @@ void MemInterface_Init();
 
 void MemInterface_SetRead(bool high);
 void MemInterface_SetEnable(bool high);
+
+void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len);
 
 void MemInterface_Background();
 

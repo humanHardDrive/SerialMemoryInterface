@@ -15,6 +15,7 @@ DATA_BUS_TYPE l_LastPlacedData = 0;
 DATA_BUS_TYPE l_DataCache[CACHE_SIZE];
 ADDRESS_BUS_TYPE l_CacheStartAddress = (ADDRESS_BUS_TYPE)(-1);
 bool l_CacheDirty = false;
+bool l_WaitingForMemory = false;
 
 void ChangeDataBusDirection(bool input)
 {
@@ -29,15 +30,45 @@ DATA_BUS_TYPE GetData(ADDRESS_BUS_TYPE address)
 {
   if(address >= l_CacheStartAddress && address < (l_CacheStartAddress + CACHE_SIZE)) //The data is in cache
   {
+    l_WaitingForMemory = false;
     return l_DataCache[address - l_CacheStartAddress];
   }
-  else
+  else if(!l_WaitingForMemory)
   {
     if(l_CacheDirty)
       Commander_WriteMemory(address, l_DataCache, DATA_BYTES);
 
     Commander_RequestMemory(address, DATA_BYTES);
+
+    l_WaitingForMemory = true;
+
+    return 0;
   }
+}
+
+void PutData(DATA_BUS_TYPE data)
+{
+  uint16_t RegWord;
+  
+  for(uint8_t i = 0; i < DATA_EXPANDERS; i++)
+  {
+    RegWord = ((uint16_t*)&data)[i];
+    IOExpander_WriteReg(DATA_EXP_OFFSET + i, IOREG_GPIOA, (uint8_t*)&RegWord, 2);
+  }
+}
+
+ADDRESS_BUS_TYPE GetCurrentAddress()
+{
+  ADDRESS_BUS_TYPE address = 0;
+  uint16_t RegWord;
+
+  for(uint8_t i = 0; i < ADDRESS_EXPANDERS; i--)
+  {    
+    IOExpander_ReadReg(ADDRESS_EXP_OFFSET + i, IOREG_GPIOA, (uint8_t*)&RegWord, 2);
+    ((uint16_t*)&address)[i] = RegWord;
+  }
+
+  return address;
 }
 
 void MemInterface_Init()
@@ -71,9 +102,17 @@ void MemInterface_SetEnable(bool high)
 }
 
 
+void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len)
+{
+  memcpy(l_DataCache, data, len);
+  l_CacheStartAddress = address;
+}
+
+
 void MemInterface_Background()
 {
   bool CurrentMemEnableState = digitalRead(MEMENABLE_PIN);
+  ADDRESS_BUS_TYPE CurrentAddress = GetCurrentAddress();
 
   if (CurrentMemEnableState && l_EnableIsHigh ||
       !CurrentMemEnableState && !l_EnableIsHigh)
@@ -103,6 +142,17 @@ void MemInterface_Background()
     {
       //Set data IO expanders as inputs (high impedance)
       ChangeDataBusDirection(true);
+    }
+  }
+
+  if(l_LastReqAddress != CurrentAddress)
+  {
+    DATA_BUS_TYPE data = GetData(CurrentAddress);
+
+    if(!l_WaitingForMemory)
+    {
+      PutData(data);
+      l_LastReqAddress = CurrentAddress;
     }
   }
 

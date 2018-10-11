@@ -42,6 +42,6 @@ void IOExpander_WriteReg(uint8_t address, uint8_t reg, uint8_t val);
 void IOExpander_WriteReg(uint8_t address, uint8_t basereg, uint8_t* val, uint8_t len);
 
 uint8_t IOExpander_ReadReg(uint8_t address, uint8_t reg);
-void IOExpanderReadReg(uint8_t address, uint8_t basereg, uint8_t* val, uint8_t len);
+void IOExpander_ReadReg(uint8_t address, uint8_t basereg, uint8_t* val, uint8_t len);
 
 #endif

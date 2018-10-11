@@ -50,7 +50,7 @@ uint8_t IOExpander_ReadReg(uint8_t address, uint8_t reg)
   return buffer[2];
 }
 
-void IOExpanderReadReg(uint8_t address, uint8_t basereg, uint8_t* val, uint8_t len)
+void IOExpander_ReadReg(uint8_t address, uint8_t basereg, uint8_t* val, uint8_t len)
 {
   byte buffer[2];
   buffer[0] = (IOREG_OPCODE | IOEXP_ADDR(address) | IOREG_READ);
