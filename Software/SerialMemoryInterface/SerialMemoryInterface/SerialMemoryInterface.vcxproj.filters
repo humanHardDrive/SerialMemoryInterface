@@ -13,10 +13,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shared Firmware Headers">
+      <UniqueIdentifier>{479bc7c5-25d0-4b95-9e89-013a51ab558a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SerialPort.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Hardware\SerialMemoryInterface\Msgs.h">
+      <Filter>Shared Firmware Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
