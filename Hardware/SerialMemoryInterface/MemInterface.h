@@ -5,12 +5,12 @@
 
 #define CACHE_SIZE  32 //Keep this as a power of 2 to avoid using modulo
 
-#define ADDRESS_BITS  16
-#define DATA_BITS     16
+#define ADDRESS_BITS  8
+#define DATA_BITS     8
 
-#define ADDRESS_EXPANDERS   (ADDRESS_BITS / EXPANDER_WIDTH) //This is wrong
+#define ADDRESS_EXPANDERS   ((ADDRESS_BITS + EXPANDER_WIDTH - 1) / EXPANDER_WIDTH)
 #define ADDRESS_BYTES       (ADDRESS_BITS / 8)
-#define DATA_EXPANDERS      (DATA_BITS / EXPANDER_WIDTH) //So is this
+#define DATA_EXPANDERS      ((DATA_BITS + EXPANDER_WIDTH - 1) / EXPANDER_WIDTH)
 #define DATA_BYTES          (DATA_BITS / 8)
 
 #if ADDRESS_BYTES > 8

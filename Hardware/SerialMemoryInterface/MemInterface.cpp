@@ -76,7 +76,8 @@ void MemInterface_Init()
 {
   //Setup IO
   pinMode(MEMENABLE_PIN, INPUT);
-  pinMode(READWRITE_PIN, INPUT);
+  pinMode(READ_PIN, INPUT);
+  pinMode(WRITE_PIN, INPUT);
 
   //Setup IO expanders
   IOExpander_Reset();
@@ -112,54 +113,5 @@ void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len
 
 void MemInterface_Background()
 {
-  bool CurrentMemEnableState = digitalRead(MEMENABLE_PIN);
-  ADDRESS_BUS_TYPE CurrentAddress = GetCurrentAddress();
-
-  if (CurrentMemEnableState && l_EnableIsHigh ||
-      !CurrentMemEnableState && !l_EnableIsHigh)
-  {
-    bool CurrentReadWriteState = digitalRead(READWRITE_PIN);
-
-    if (CurrentReadWriteState != l_LastReadWriteState)
-    {
-      if (CurrentReadWriteState && l_ReadIsHigh ||
-          !CurrentReadWriteState && !l_ReadIsHigh)
-      {
-        //Set data IO expanders as outputs
-        ChangeDataBusDirection(false);
-      }
-      else
-      {
-        //Set data IO expanders as inputs
-        ChangeDataBusDirection(true);
-      }
-    }
-
-    l_LastReadWriteState = CurrentReadWriteState;
-  }
-  else
-  {
-    if (CurrentMemEnableState != l_LastMemEnableState)
-    {
-      //Set data IO expanders as inputs (high impedance)
-      ChangeDataBusDirection(true);
-    }
-  }
-
-  //Has the current address been serviced?
-  if(l_LastReqAddress != CurrentAddress)
-  {
-    //Need to check if this is read or write
-    DATA_BUS_TYPE data = GetData(CurrentAddress);
-
-    //Don't put data that isn't available
-    if(!l_WaitingForMemory)
-    {
-      PutData(data);
-      l_LastReqAddress = CurrentAddress;
-    }
-  }
-
-  l_LastMemEnableState = CurrentMemEnableState;
 }
 

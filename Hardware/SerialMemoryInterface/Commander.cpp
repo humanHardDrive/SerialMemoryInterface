@@ -25,21 +25,5 @@ void Commander_WriteMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len)
 
 void Commander_Background(uint8_t c)
 {
-  static uint8_t ParseState = WAITING_FOR_STX;
-
-  switch(ParseState)
-  {
-    case WAITING_FOR_STX:
-    break;
-
-    case WAITING_FOR_LEN:
-    break;
-
-    case WAITING_FOR_DATA:
-    break;
-
-    case WAITING_FOR_ETX:
-    break;
-  }
 }
 
