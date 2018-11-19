@@ -3,6 +3,8 @@
 #include "IOExpander.h"
 #include "Pins.h"
 
+#include <SPI.h>
+
 bool l_ReadIsHigh = false;
 bool l_EnableIsHigh = false;
 
@@ -17,8 +19,16 @@ ADDRESS_BUS_TYPE l_CacheStartAddress = (ADDRESS_BUS_TYPE)(-1);
 bool l_CacheDirty = false;
 bool l_WaitingForMemory = false;
 
+uint32_t l_LastClkTime = 0;
+bool l_ReadMode = false;
+
 void ChangeDataBusDirection(bool input)
 {
+#ifdef DEBUG_MEMINTERFACE
+  Serial.println(__FUNCTION__);
+  Serial.println();
+#endif
+  
   for(byte i = 0; i < DATA_EXPANDERS; i++)
   {
     IOExpander_WriteReg(DATA_EXP_OFFSET + i, IOREG_IODIRA, input ? 0xFF : 0x00);
@@ -74,19 +84,56 @@ ADDRESS_BUS_TYPE GetCurrentAddress()
 
 void MemInterface_Init()
 {
-  //Setup IO
-  pinMode(MEMENABLE_PIN, INPUT);
+#ifdef DEBUG_MEMINTERFACE
+  Serial.println(__FUNCTION__);
+  
+  Serial.print("Cache Size: ");
+  Serial.println(CACHE_SIZE);
+  
+  Serial.print("Addresss Bus: ");
+  Serial.print(ADDRESS_BITS);
+  Serial.print(" ");
+  Serial.print(ADDRESS_BYTES);
+  Serial.print(" ");
+  Serial.println(ADDRESS_EXPANDERS);
+
+  Serial.print("Data Bus: ");
+  Serial.print(DATA_BITS);
+  Serial.print(" ");
+  Serial.print(DATA_BYTES);
+  Serial.print(" ");
+  Serial.println(DATA_EXPANDERS);
+
+  Serial.println();
+#endif
+
+  pinMode(IOEXPCS_PIN, OUTPUT);  
+  digitalWrite(IOEXPCS_PIN, HIGH);
+
+  pinMode(IOEXPRST_PIN, OUTPUT);
+  digitalWrite(IOEXPRST_PIN, HIGH);
+
+  pinMode(CLOCKOUT_PIN, OUTPUT);
+  digitalWrite(CLOCKOUT_PIN, HIGH);
+
   pinMode(READ_PIN, INPUT);
   pinMode(WRITE_PIN, INPUT);
 
+  SPI.begin();
+  SPI.setClockDivider(SPI_CLOCK_DIV8);
+
   //Setup IO expanders
   IOExpander_Reset();
+  delay(1);
   IOExpander_WriteReg(0, IOREG_IOCON0, 0x08); //Enable hardware addresses
   for(byte i = 0; i < ADDRESS_EXPANDERS; i++)
   {
     //Set as inputs
     IOExpander_WriteReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRA, 0xFF);
     IOExpander_WriteReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRB, 0xFF);
+
+    IOExpander_ReadReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRA);
+    IOExpander_ReadReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRB);
   }
 
   ChangeDataBusDirection(true);
@@ -113,5 +160,33 @@ void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len
 
 void MemInterface_Background()
 {
+  if(millis() - l_LastClkTime > 1000)
+  {
+    digitalWrite(CLOCKOUT_PIN, !digitalRead(CLOCKOUT_PIN));
+    l_LastClkTime = millis();
+  }
+
+  if(!digitalRead(READ_PIN) && !l_ReadMode)
+  {
+#ifdef DEBUG_MEMINTERFACE
+    Serial.println(__FUNCTION__);
+    Serial.println("Changing data bus to output");
+    Serial.println();
+#endif
+    
+    ChangeDataBusDirection(false);
+    l_ReadMode = true;
+  }
+  else if(digitalRead(READ_PIN) && l_ReadMode)
+  {
+#ifdef DEBUG_MEMINTERFACE
+    Serial.println(__FUNCTION__);
+    Serial.println("Changing data bus to input");
+    Serial.println();
+#endif
+    
+    ChangeDataBusDirection(true);
+    l_ReadMode = false;
+  }
 }
 

@@ -5,6 +5,8 @@
 
 #define EXPANDER_WIDTH  16 
 
+#define DEBUG_IOEXP
+
 //Bank = 0 Configuration
 #define IOREG_IODIRA    0x00
 #define IOREG_IODIRB    0x01

@@ -3,9 +3,11 @@
 
 #include <Arduino.h>
 
+#define DEBUG_MEMINTERFACE
+
 #define CACHE_SIZE  32 //Keep this as a power of 2 to avoid using modulo
 
-#define ADDRESS_BITS  8
+#define ADDRESS_BITS  16
 #define DATA_BITS     8
 
 #define ADDRESS_EXPANDERS   ((ADDRESS_BITS + EXPANDER_WIDTH - 1) / EXPANDER_WIDTH)
