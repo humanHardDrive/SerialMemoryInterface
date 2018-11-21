@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-//#define DEBUG_MEMINTERFACE
+#define DEBUG_MEMINTERFACE
 
 #define CACHE_SIZE  128 //Keep this as a power of 2 to avoid using modulo
 
@@ -40,6 +40,9 @@ void MemInterface_SetRead(bool high);
 void MemInterface_SetEnable(bool high);
 
 void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len);
+
+void MemInterface_ClockEnable(uint16_t period);
+void MemInterface_ClockDisable();
 
 void MemInterface_Background();
 

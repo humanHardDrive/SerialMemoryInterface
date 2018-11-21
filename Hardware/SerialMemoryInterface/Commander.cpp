@@ -8,6 +8,11 @@ void ProcessCommand(uint8_t type, uint16_t bytecount);
 
 void Commander_RequestMemory(ADDRESS_BUS_TYPE address, uint8_t len)
 {
+  Serial.write(PACKET_STX);
+  Serial.write(MEMORY_REQUEST);
+  Serial.write(sizeof(ADDRESS_BUS_TYPE));
+  Serial.write((char*)&address, sizeof(ADDRESS_BUS_TYPE));
+  Serial.write(PACKET_ETX);
 }
 
 void Commander_WriteMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len)
@@ -26,7 +31,7 @@ void CacheResponse()
 }
 
 void VersionResponse()
-{  
+{
   Serial.write(PACKET_STX);
   Serial.write(VERSION_REQUEST);
   Serial.write(2);
@@ -95,6 +100,10 @@ void ProcessCommand(uint8_t type)
     case CACHE_SIZE_REQUEST:
       CacheResponse();
       break;
+
+    case CLOCK_DISABLE:
+      MemInterface_ClockDisable();
+      break;
   }
 }
 
@@ -103,6 +112,9 @@ void ProcessCommand(uint8_t type, uint16_t bytecount)
   switch (type)
   {
     case MEMORY_REQUEST:
+      break;
+
+    case CLOCK_ENABLE:
       break;
   }
 }

@@ -21,6 +21,8 @@ bool l_CacheDirty = false;
 bool l_WaitingForMemory = false;
 
 uint32_t l_LastClkTime = 0;
+uint16_t l_ClkPeriod = 0;
+
 bool l_ReadMode = false;
 bool l_WriteMode = false;
 
@@ -167,13 +169,25 @@ void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len
 }
 
 
+void MemInterface_ClockEnable(uint16_t period)
+{
+  l_ClkPeriod = period;
+  l_LastClkTime = millis();
+}
+
+void MemInterface_ClockDisable()
+{
+  l_ClkPeriod = 0;
+}
+
+
 void MemInterface_Background()
 {
   ADDRESS_BUS_TYPE tempaddress;
 
   //Update the clock
   //Remove later
-  if (millis() - l_LastClkTime > 100)
+  if (l_ClkPeriod && millis() - l_LastClkTime > 100)
   {
     digitalWrite(CLOCKOUT_PIN, !digitalRead(CLOCKOUT_PIN));
     l_LastClkTime = millis();

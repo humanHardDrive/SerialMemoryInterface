@@ -21,6 +21,8 @@ enum
   CACHE_SIZE_REQUEST, //From host to hardware
   MEMORY_REQUEST, //From hardware to host
   MEMORY_WRITE, //From hardware to host
+  CLOCK_ENABLE,
+  CLOCK_DISABLE,
   ALL_COMMANDS
 };
 
