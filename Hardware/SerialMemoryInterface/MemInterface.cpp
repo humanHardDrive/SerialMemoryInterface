@@ -4,6 +4,7 @@
 #include "Pins.h"
 
 #include <SPI.h>
+#include <string.h>
 
 bool l_ReadIsHigh = false;
 bool l_EnableIsHigh = false;
@@ -11,7 +12,7 @@ bool l_EnableIsHigh = false;
 bool l_LastReadWriteState = false;
 bool l_LastMemEnableState = false;
 
-ADDRESS_BUS_TYPE l_LastReqAddress = (ADDRESS_BUS_TYPE)(-1);
+ADDRESS_BUS_TYPE l_CurrentAddress = (ADDRESS_BUS_TYPE)(-1);
 DATA_BUS_TYPE l_LastPlacedData = 0;
 
 DATA_BUS_TYPE l_DataCache[CACHE_SIZE];
@@ -21,15 +22,16 @@ bool l_WaitingForMemory = false;
 
 uint32_t l_LastClkTime = 0;
 bool l_ReadMode = false;
+bool l_WriteMode = false;
 
 void ChangeDataBusDirection(bool input)
 {
 #ifdef DEBUG_MEMINTERFACE
-  Serial.println(__FUNCTION__);
-  Serial.println();
+  Serial.print(__FUNCTION__);
+  Serial.print('('); Serial.print(input); Serial.println(')');
 #endif
-  
-  for(byte i = 0; i < DATA_EXPANDERS; i++)
+
+  for (byte i = 0; i < DATA_EXPANDERS; i++)
   {
     IOExpander_WriteReg(DATA_EXP_OFFSET + i, IOREG_IODIRA, input ? 0xFF : 0x00);
     IOExpander_WriteReg(DATA_EXP_OFFSET + i, IOREG_IODIRB, input ? 0xFF : 0x00);
@@ -38,14 +40,14 @@ void ChangeDataBusDirection(bool input)
 
 DATA_BUS_TYPE GetData(ADDRESS_BUS_TYPE address)
 {
-  if(address >= l_CacheStartAddress && address < (l_CacheStartAddress + CACHE_SIZE)) //The data is in cache
+  if (address >= l_CacheStartAddress && address < (l_CacheStartAddress + CACHE_SIZE)) //The data is in cache
   {
     l_WaitingForMemory = false;
     return l_DataCache[address - l_CacheStartAddress];
   }
-  else if(!l_WaitingForMemory) //Have to request it from the host
+  else if (!l_WaitingForMemory) //Have to request it from the host
   {
-    if(l_CacheDirty) //Write back any changes made
+    if (l_CacheDirty) //Write back any changes made
       Commander_WriteMemory(address, l_DataCache, DATA_BYTES);
 
     //Request new memory
@@ -60,8 +62,8 @@ DATA_BUS_TYPE GetData(ADDRESS_BUS_TYPE address)
 void PutData(DATA_BUS_TYPE data)
 {
   uint16_t RegWord;
-  
-  for(uint8_t i = 0; i < DATA_EXPANDERS; i++)
+
+  for (uint8_t i = 0; i < DATA_EXPANDERS; i++)
   {
     RegWord = ((uint16_t*)&data)[i];
     IOExpander_WriteReg(DATA_EXP_OFFSET + i, IOREG_GPIOA, (uint8_t*)&RegWord, 2);
@@ -70,26 +72,25 @@ void PutData(DATA_BUS_TYPE data)
 
 ADDRESS_BUS_TYPE GetCurrentAddress()
 {
-  ADDRESS_BUS_TYPE address = 0;
+  uint32_t address = 0;
   uint16_t RegWord;
+  uint16_t* pAddress = (uint16_t*)&address;
 
-  for(uint8_t i = 0; i < ADDRESS_EXPANDERS; i--)
-  {    
+  for (uint8_t i = 0; i < ADDRESS_EXPANDERS; i++)
+  {
     IOExpander_ReadReg(ADDRESS_EXP_OFFSET + i, IOREG_GPIOA, (uint8_t*)&RegWord, 2);
-    ((uint16_t*)&address)[i] = RegWord;
+    memcpy(&address + 2 * i, &RegWord, 2);
   }
 
-  return address;
+  return (ADDRESS_BUS_TYPE)(address);
 }
 
 void MemInterface_Init()
 {
 #ifdef DEBUG_MEMINTERFACE
-  Serial.println(__FUNCTION__);
-  
   Serial.print("Cache Size: ");
   Serial.println(CACHE_SIZE);
-  
+
   Serial.print("Addresss Bus: ");
   Serial.print(ADDRESS_BITS);
   Serial.print(" ");
@@ -103,11 +104,9 @@ void MemInterface_Init()
   Serial.print(DATA_BYTES);
   Serial.print(" ");
   Serial.println(DATA_EXPANDERS);
-
-  Serial.println();
 #endif
 
-  pinMode(IOEXPCS_PIN, OUTPUT);  
+  pinMode(IOEXPCS_PIN, OUTPUT);
   digitalWrite(IOEXPCS_PIN, HIGH);
 
   pinMode(IOEXPRST_PIN, OUTPUT);
@@ -120,20 +119,17 @@ void MemInterface_Init()
   pinMode(WRITE_PIN, INPUT);
 
   SPI.begin();
-  SPI.setClockDivider(SPI_CLOCK_DIV8);
+  SPI.setClockDivider(SPI_CLOCK_DIV4);
 
   //Setup IO expanders
   IOExpander_Reset();
   delay(1);
   IOExpander_WriteReg(0, IOREG_IOCON0, 0x08); //Enable hardware addresses
-  for(byte i = 0; i < ADDRESS_EXPANDERS; i++)
+  for (byte i = 0; i < ADDRESS_EXPANDERS; i++)
   {
     //Set as inputs
     IOExpander_WriteReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRA, 0xFF);
     IOExpander_WriteReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRB, 0xFF);
-
-    IOExpander_ReadReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRA);
-    IOExpander_ReadReg(ADDRESS_EXP_OFFSET + i, IOREG_IODIRB);
   }
 
   ChangeDataBusDirection(true);
@@ -160,33 +156,63 @@ void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len
 
 void MemInterface_Background()
 {
-  if(millis() - l_LastClkTime > 1000)
+  ADDRESS_BUS_TYPE tempaddress;
+
+  //Update the clock
+  //Remove later
+  if (millis() - l_LastClkTime > 100)
   {
     digitalWrite(CLOCKOUT_PIN, !digitalRead(CLOCKOUT_PIN));
     l_LastClkTime = millis();
   }
 
-  if(!digitalRead(READ_PIN) && !l_ReadMode)
+  //Handle chaning the direction of the data bus according to the read pin
+  if (!digitalRead(READ_PIN) && !l_ReadMode)
   {
 #ifdef DEBUG_MEMINTERFACE
-    Serial.println(__FUNCTION__);
     Serial.println("Changing data bus to output");
-    Serial.println();
 #endif
-    
+
     ChangeDataBusDirection(false);
     l_ReadMode = true;
   }
-  else if(digitalRead(READ_PIN) && l_ReadMode)
-  {
+  else if (digitalRead(READ_PIN) && l_ReadMode) //Regardless of the write mode
+  { //Switch to a high impedance state
 #ifdef DEBUG_MEMINTERFACE
-    Serial.println(__FUNCTION__);
     Serial.println("Changing data bus to input");
-    Serial.println();
 #endif
-    
+
     ChangeDataBusDirection(true);
     l_ReadMode = false;
   }
+
+  if (!digitalRead(WRITE_PIN) && !l_WriteMode)
+  {
+#ifdef DEBUG_MEMINTERFACE
+    Serial.println("Write mode active");
+#endif
+    l_WriteMode = true;
+  }
+  else if (digitalRead(WRITE_PIN) && l_WriteMode)
+  {
+#ifdef DEBUG_MEMINTERFACE
+    Serial.println("Write mode inactive");
+#endif
+    l_WriteMode = false;
+  }
+
+  if (l_ReadMode || l_WriteMode)
+  {
+    //Update the current address bus
+    tempaddress = GetCurrentAddress();
+    if (tempaddress != l_CurrentAddress)
+    {
+#ifdef DEBUG_MEMINTERFACE
+      Serial.print("New address: ");
+      Serial.println(tempaddress, HEX);
+#endif
+      l_CurrentAddress = tempaddress;
+    }
+  }  
 }
 

@@ -15,20 +15,16 @@
 #define DATA_EXPANDERS      ((DATA_BITS + EXPANDER_WIDTH - 1) / EXPANDER_WIDTH)
 #define DATA_BYTES          (DATA_BITS / 8)
 
-#if ADDRESS_BYTES > 8
+#if ADDRESS_BYTES > 4
 #error "Address bus too large"
-#elif ADDRESS_BYTES > 4
-#define ADDRESS_BUS_TYPE uint64_t
 #elif ADDRESS_BYTES > 2
 #define ADDRESS_BUS_TYPE uint32_t
 #else
 #define ADDRESS_BUS_TYPE uint16_t
 #endif
 
-#if DATA_BYTES > 8
+#if DATA_BYTES > 4
 #error "Data bus too large"
-#elif DATA_BYTES > 4
-#define DATA_BUS_TYPE uint64_t
 #elif DATA_BYTES > 2
 #define DATA_BUS_TYPE uint32_t
 #else
