@@ -127,7 +127,7 @@ void MemInterface_Init()
   digitalWrite(CLOCKOUT_PIN, HIGH);
 
   pinMode(WAIT_PIN, OUTPUT);
-  digitalWrite(WAIT_PIN, HIGH);
+  digitalWrite(WAIT_PIN, LOW);
 
   pinMode(READ_PIN, INPUT);
   pinMode(WRITE_PIN, INPUT);
@@ -230,11 +230,12 @@ void MemInterface_Background()
       Serial.print("New address: ");
       Serial.println(tempaddress, HEX);
 #endif
-      l_CurrentAddress = tempaddress;
+      
       data = GetData(tempaddress);
       if(!l_WaitingForMemory)
       {
         digitalWrite(WAIT_PIN, HIGH);
+        l_CurrentAddress = tempaddress;
       }
       else
       {
