@@ -42,11 +42,22 @@ DATA_BUS_TYPE GetData(ADDRESS_BUS_TYPE address)
 {
   if (address >= l_CacheStartAddress && address < (l_CacheStartAddress + CACHE_SIZE)) //The data is in cache
   {
+#ifdef DEBUG_MEMINTERFACE
+    Serial.print("Address ");
+    Serial.print(address, HEX);
+    Serial.println(" in cache");
+#endif
     l_WaitingForMemory = false;
     return l_DataCache[address - l_CacheStartAddress];
   }
   else if (!l_WaitingForMemory) //Have to request it from the host
   {
+#ifdef DEBUG_MEMINTERFACE
+    Serial.print("Address ");
+    Serial.print(address, HEX);
+    Serial.println(" not in cache. Requesting");
+#endif
+
     if (l_CacheDirty) //Write back any changes made
       Commander_WriteMemory(address, l_DataCache, DATA_BYTES);
 
@@ -201,18 +212,27 @@ void MemInterface_Background()
     l_WriteMode = false;
   }
 
-  if (l_ReadMode || l_WriteMode)
+  //Only care about the address if one of the access modes are set
+  //But not both
+  if ((!l_ReadMode && l_WriteMode) ||
+      (l_ReadMode && !l_WriteMode))
   {
     //Update the current address bus
     tempaddress = GetCurrentAddress();
     if (tempaddress != l_CurrentAddress)
     {
+      DATA_BUS_TYPE data;
+      
 #ifdef DEBUG_MEMINTERFACE
       Serial.print("New address: ");
       Serial.println(tempaddress, HEX);
 #endif
-      l_CurrentAddress = tempaddress;
+      data = GetData(tempaddress);
+      if(!l_WaitingForMemory)
+      {
+        l_CurrentAddress = tempaddress;
+      }
     }
-  }  
+  }
 }
 

@@ -5,7 +5,7 @@
 #define CLOCKOUT_PIN    3
 #define READ_PIN        4
 #define WRITE_PIN       5
-#define MEMENABLE_PIN   6
+#define WAIT_PIN        6
 
 #define IOEXPCS_PIN     10
 

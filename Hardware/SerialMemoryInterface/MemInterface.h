@@ -5,7 +5,7 @@
 
 #define DEBUG_MEMINTERFACE
 
-#define CACHE_SIZE  32 //Keep this as a power of 2 to avoid using modulo
+#define CACHE_SIZE  128 //Keep this as a power of 2 to avoid using modulo
 
 #define ADDRESS_BITS  16
 #define DATA_BITS     8
