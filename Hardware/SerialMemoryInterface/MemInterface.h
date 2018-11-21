@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define DEBUG_MEMINTERFACE
+//#define DEBUG_MEMINTERFACE
 
 #define CACHE_SIZE  128 //Keep this as a power of 2 to avoid using modulo
 

@@ -160,7 +160,6 @@ void MemInterface_SetEnable(bool high)
   l_EnableIsHigh = high;
 }
 
-
 void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len)
 {
   memcpy(l_DataCache, data, len);

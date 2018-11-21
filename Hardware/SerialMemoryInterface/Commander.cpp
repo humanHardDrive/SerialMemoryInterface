@@ -3,33 +3,42 @@
 uint16_t l_CurrentMsgLen = 0;
 uint8_t l_CurrentMsgType = NO_COMMAND, l_CurrentParseState = WAITING_FOR_STX;
 
+void ProcessCommand(uint8_t type);
+void ProcessCommand(uint8_t type, uint16_t bytecount);
+
 void Commander_RequestMemory(ADDRESS_BUS_TYPE address, uint8_t len)
 {
-  Serial.write(PACKET_STX);
-  Serial.write(MEMORY_REQUEST);
-  Serial.write(address);
-  Serial.write(len);
-  Serial.write(PACKET_ETX);
 }
 
 void Commander_WriteMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len)
 {
+}
+
+void CacheResponse()
+{
   Serial.write(PACKET_STX);
-  Serial.write(MEMORY_WRITE);
-  Serial.write(address);
-  Serial.write(len);
-
-  for (uint8_t i = 0; i < len; i++)
-    Serial.write( ((uint8_t*)data)[i] );
-
+  Serial.write(CACHE_SIZE_REQUEST);
+  Serial.write(3);
+  Serial.write(CACHE_SIZE);
+  Serial.write(ADDRESS_BYTES);
+  Serial.write(DATA_BYTES);
   Serial.write(PACKET_ETX);
 }
 
+void VersionResponse()
+{  
+  Serial.write(PACKET_STX);
+  Serial.write(VERSION_REQUEST);
+  Serial.write(2);
+  Serial.write(0);
+  Serial.write(0);
+  Serial.write(PACKET_ETX);
+}
 
 void Commander_Background(uint8_t c)
 {
   static uint8_t bytecount = 0;
-  
+
   switch (l_CurrentParseState)
   {
     case WAITING_FOR_STX:
@@ -52,19 +61,48 @@ void Commander_Background(uint8_t c)
 
     case WAITING_FOR_LEN_MSB:
       *((uint8_t*)(&l_CurrentMsgLen) + 1) = c;
-      l_CurrentParseState = WAITING_FOR_DATA;
+      l_CurrentParseState = PROCESS_COMMAND;
+      break;
+
+    case PROCESS_COMMAND:
+      ProcessCommand(l_CurrentMsgType);
+      if (l_CurrentMsgLen)
+        l_CurrentParseState = WAITING_FOR_DATA;
+      else
+        l_CurrentParseState = WAITING_FOR_ETX;
       break;
 
     case WAITING_FOR_DATA:
-      switch(l_CurrentMsgType)
-      {
-        
-      }
+      ProcessCommand(l_CurrentMsgType, bytecount);
       bytecount++;
       break;
 
     case WAITING_FOR_ETX:
-    l_CurrentParseState = WAITING_FOR_STX;
+      if (c == PACKET_ETX)
+        l_CurrentParseState = WAITING_FOR_STX;
+      break;
+  }
+}
+
+void ProcessCommand(uint8_t type)
+{
+  switch (type)
+  {
+    case VERSION_REQUEST:
+      VersionResponse();
+      break;
+
+    case CACHE_SIZE_REQUEST:
+      CacheResponse();
+      break;
+  }
+}
+
+void ProcessCommand(uint8_t type, uint16_t bytecount)
+{
+  switch (type)
+  {
+    case MEMORY_REQUEST:
       break;
   }
 }
