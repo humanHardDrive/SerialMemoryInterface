@@ -70,10 +70,7 @@ void Commander_Background(uint8_t c)
 
     case WAITING_FOR_LEN_MSB:
       *((uint8_t*)(&l_CurrentMsgLen) + 1) = c;
-      l_CurrentParseState = PROCESS_COMMAND;
-      break;
-
-    case PROCESS_COMMAND:
+      
       ProcessCommand(l_CurrentMsgType);
       if (l_CurrentMsgLen)
         l_CurrentParseState = WAITING_FOR_DATA;
