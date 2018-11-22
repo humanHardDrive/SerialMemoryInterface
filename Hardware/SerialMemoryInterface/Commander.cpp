@@ -26,6 +26,7 @@ void CacheResponse()
   Serial.write(PACKET_STX);
   Serial.write(CACHE_SIZE_REQUEST);
   Serial.write(3);
+  Serial.write(0);
   Serial.write(CACHE_SIZE);
   Serial.write(ADDRESS_BYTES);
   Serial.write(DATA_BYTES);
@@ -37,6 +38,7 @@ void VersionResponse()
   Serial.write(PACKET_STX);
   Serial.write(VERSION_REQUEST);
   Serial.write(2);
+  Serial.write(0);
   Serial.write(0);
   Serial.write(0);
   Serial.write(PACKET_ETX);
