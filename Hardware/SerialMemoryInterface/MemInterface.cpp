@@ -192,6 +192,9 @@ void MemInterface_Background()
 {
   ADDRESS_BUS_TYPE tempaddress;
 
+  if(!Commander_HostConnected())
+    return;
+
   //Update the clock
   //Remove later
   if (l_ClkPeriod && millis() - l_LastClkTime > 100)

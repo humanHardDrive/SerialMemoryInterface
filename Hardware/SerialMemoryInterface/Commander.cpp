@@ -3,6 +3,8 @@
 uint16_t l_CurrentMsgLen = 0;
 uint8_t l_CurrentMsgType = NO_COMMAND, l_CurrentParseState = WAITING_FOR_STX;
 
+bool l_HostConnected = false;
+
 void ProcessCommand(uint8_t type);
 void ProcessCommand(uint8_t type, uint16_t bytecount);
 
@@ -89,11 +91,19 @@ void Commander_Background(uint8_t c)
   }
 }
 
+
+bool Commander_HostConnected()
+{
+  return l_HostConnected;
+}
+
+
 void ProcessCommand(uint8_t type)
 {
   switch (type)
   {
     case VERSION_REQUEST:
+      l_HostConnected = true;
       VersionResponse();
       break;
 
