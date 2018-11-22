@@ -43,6 +43,7 @@ void MemInterface_UpdateMemory(ADDRESS_BUS_TYPE address, void* data, uint8_t len
 
 void MemInterface_ClockEnable(uint16_t period);
 void MemInterface_ClockDisable();
+void MemInterface_SingleClock();
 
 void MemInterface_Background();
 

@@ -180,6 +180,13 @@ void MemInterface_ClockDisable()
   l_ClkPeriod = 0;
 }
 
+void MemInterface_SingleClock()
+{
+  digitalWrite(CLOCKOUT_PIN, LOW);
+  delay(1);
+  digitalWrite(CLOCKOUT_PIN, HIGH);
+}
+
 
 void MemInterface_Background()
 {
