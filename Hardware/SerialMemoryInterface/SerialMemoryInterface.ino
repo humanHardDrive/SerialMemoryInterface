@@ -1,18 +1,9 @@
-#include "MemInterface.h"
-#include "Commander.h"
+void setup() {
+  // put your setup code here, to run once:
 
-void setup() 
-{
-  Serial.begin(115200);
-  delay(100);
-
-  MemInterface_Init();
 }
 
-void loop() 
-{
-  MemInterface_Background();
+void loop() {
+  // put your main code here, to run repeatedly:
 
-  if(Serial.available())
-    Commander_Background((uint8_t)Serial.read());
 }
