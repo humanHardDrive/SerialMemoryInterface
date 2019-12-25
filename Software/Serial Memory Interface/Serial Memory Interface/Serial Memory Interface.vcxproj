@@ -134,8 +134,11 @@
     <ClCompile Include="Source\SerialMemoryFrame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\LockingQ.h" />
     <ClInclude Include="Headers\SerialMemoryApp.h" />
     <ClInclude Include="Headers\SerialMemoryFrame.h" />
+    <ClInclude Include="Headers\ThreadBase.h" />
+    <ClInclude Include="Source\ThreadBase.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
