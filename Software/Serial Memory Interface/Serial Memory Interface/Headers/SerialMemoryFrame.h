@@ -1,6 +1,9 @@
 #pragma once
 
 #include <wx/wx.h>
+#include <wx/grid.h>
+
+#include <string>
 
 class SerialMemoryFrame : public wxFrame
 {
@@ -11,4 +14,8 @@ public:
 
 private:
 	DECLARE_EVENT_TABLE()
+
+	void LoadFile(const std::string& sPath);
+
+	wxGrid* m_MemoryGrid;
 };
