@@ -70,11 +70,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(IncludePath)</IncludePath>
+    <IncludePath>.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(BOOST_PATH)\;$(IncludePath)</IncludePath>
     <LibraryPath>$(WX_PATH)\lib\vc_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(IncludePath)</IncludePath>
+    <IncludePath>.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(BOOST_PATH)\;$(IncludePath)</IncludePath>
     <LibraryPath>$(WX_PATH)\lib\vc_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -130,11 +130,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ControlInterface.cpp" />
+    <ClCompile Include="Source\NetworkInterface.cpp" />
+    <ClCompile Include="Source\SerialInterface.cpp" />
     <ClCompile Include="Source\SerialMemoryApp.cpp" />
     <ClCompile Include="Source\SerialMemoryFrame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\ControlInterface.h" />
     <ClInclude Include="Headers\LockingQ.h" />
+    <ClInclude Include="Headers\NetworkInterface.h" />
+    <ClInclude Include="Headers\SerialInterface.h" />
     <ClInclude Include="Headers\SerialMemoryApp.h" />
     <ClInclude Include="Headers\SerialMemoryFrame.h" />
     <ClInclude Include="Headers\ThreadBase.h" />

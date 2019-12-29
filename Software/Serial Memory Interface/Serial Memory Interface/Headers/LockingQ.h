@@ -24,7 +24,7 @@ private:
 template<class T>
 inline void LockingQ<T>::push(T & v)
 {
-	std::lock<std::mutex> lock;
+	std::lock_guard<std::mutex> lock;
 	m_Q.push(v);
 }
 

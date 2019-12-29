@@ -2,6 +2,7 @@
 
 #include "ThreadBase.h"
 
+#include <boost/asio.hpp>
 #include <map>
 #include <functional>
 
@@ -14,7 +15,7 @@ struct MEM_CHANGE_REQ
 class ControlInterface : public ThreadBase
 {
 public:
-	ControlInterface();
+	ControlInterface(boost::asio::io_context& ioContext);
 	~ControlInterface();
 
 	enum class COMMAND
@@ -33,6 +34,8 @@ public:
 
 protected:
 	virtual void processing();
+
+	boost::asio::io_context& m_IOContext;
 
 private:
 	std::map<COMMAND, std::function<void(void*)>> m_CommandHandlerFn;
