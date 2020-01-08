@@ -32,10 +32,14 @@ public:
 	void setCommandHandler(COMMAND c, std::function<void(void*)> fn) { m_CommandHandlerFn[c] = fn; }
 	void clearCommandHandler(COMMAND c) { m_CommandHandlerFn[c] = std::function<void(void*)>(); }
 
+	virtual bool connect() = 0;
+	virtual void disconnect() = 0;
+
 protected:
 	virtual void processing();
 
 	boost::asio::io_context& m_IOContext;
+	bool m_bConnected;
 
 private:
 	std::map<COMMAND, std::function<void(void*)>> m_CommandHandlerFn;
