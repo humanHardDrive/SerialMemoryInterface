@@ -70,11 +70,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(BOOST_PATH)\;$(IncludePath)</IncludePath>
+    <IncludePath>.\UI;.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(BOOST_PATH)\;$(IncludePath)</IncludePath>
     <LibraryPath>$(WX_PATH)\lib\vc_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(BOOST_PATH)\;$(IncludePath)</IncludePath>
+    <IncludePath>.\UI;.\Headers;$(WX_PATH)\include\msvc;$(WX_PATH)\include;$(BOOST_PATH)\;$(IncludePath)</IncludePath>
     <LibraryPath>$(WX_PATH)\lib\vc_lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,6 +135,7 @@
     <ClCompile Include="Source\SerialInterface.cpp" />
     <ClCompile Include="Source\SerialMemoryApp.cpp" />
     <ClCompile Include="Source\SerialMemoryFrame.cpp" />
+    <ClCompile Include="UI\MemoryViewBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\ControlInterface.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Headers\SerialMemoryFrame.h" />
     <ClInclude Include="Headers\ThreadBase.h" />
     <ClInclude Include="Source\ThreadBase.cpp" />
+    <ClInclude Include="UI\MemoryViewBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

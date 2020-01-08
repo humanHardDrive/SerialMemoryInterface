@@ -5,17 +5,14 @@
 
 #include <string>
 
-class SerialMemoryFrame : public wxFrame
+#include "MemoryViewBase.h"
+
+class SerialMemoryFrame : public MemoryView
 {
 public:
 	SerialMemoryFrame(const wxString& title);
 
-	void OnQuit(wxCommandEvent& event);	
-
-private:
-	DECLARE_EVENT_TABLE()
-
-	void LoadFile(const std::string& sPath);
-
-	wxGrid* m_MemoryGrid;
+protected:
+	void OnBtnLoadFile(wxCommandEvent& event);
+	void OnWordSizeLoseFocus(wxFocusEvent& event);
 };
