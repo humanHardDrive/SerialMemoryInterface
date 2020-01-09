@@ -36,6 +36,9 @@
     <ClCompile Include="UI\MemoryViewBase.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ThreadBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\SerialMemoryApp.h">
@@ -46,9 +49,6 @@
     </ClInclude>
     <ClInclude Include="Headers\ThreadBase.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ThreadBase.cpp">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\LockingQ.h">
       <Filter>Header Files</Filter>

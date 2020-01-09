@@ -8,12 +8,6 @@ ThreadBase::ThreadBase() :
 ThreadBase::~ThreadBase()
 {
 	stop();
-
-	while (!m_MessageQ.empty())
-	{
-		delete(m_MessageQ.front().second);
-		m_MessageQ.pop();
-	}
 }
 
 void ThreadBase::start()

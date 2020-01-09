@@ -36,8 +36,6 @@ public:
 	virtual void disconnect() = 0;
 
 protected:
-	virtual void processing();
-
 	boost::asio::io_context& m_IOContext;
 	bool m_bConnected;
 
