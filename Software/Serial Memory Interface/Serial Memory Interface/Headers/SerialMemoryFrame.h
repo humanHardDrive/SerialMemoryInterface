@@ -15,4 +15,7 @@ public:
 protected:
 	void OnBtnLoadFile(wxCommandEvent& event);
 	void OnWordSizeLoseFocus(wxFocusEvent& event);
+
+private:
+	char decToHex(uint8_t n);
 };
