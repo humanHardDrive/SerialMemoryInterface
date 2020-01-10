@@ -33,6 +33,10 @@ SerialMemoryFrame::SerialMemoryFrame(const wxString & title) :
 
 void SerialMemoryFrame::OnBtnLoadFile(wxCommandEvent & event)
 {
+	wxFileDialog fileDlg(this, _("Open File"), "", "", "HEX files (*.hex)|*.hex|S Record (*.S)|.*S", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	if (fileDlg.ShowModal() == wxID_CANCEL)
+		return;
 }
 
 void SerialMemoryFrame::OnWordSizeLoseFocus(wxFocusEvent & event)
