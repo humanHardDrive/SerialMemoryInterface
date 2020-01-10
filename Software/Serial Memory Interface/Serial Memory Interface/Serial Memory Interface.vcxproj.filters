@@ -16,6 +16,12 @@
     <Filter Include="UI">
       <UniqueIdentifier>{6359ee3b-fd52-4ef9-9367-c448dc23514d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MemFile">
+      <UniqueIdentifier>{a296d0be-b33f-4d26-9e34-45a9f38ed264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MemFile\Headers">
+      <UniqueIdentifier>{50fc712c-3744-41b3-a70e-ba302d11d649}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SerialMemoryApp.cpp">
@@ -38,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="Source\ThreadBase.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MemFile\MemFile.cpp">
+      <Filter>MemFile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="UI\MemoryViewBase.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFile\Headers\MemFile.h">
+      <Filter>MemFile\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFile\Headers\ParserException.h">
+      <Filter>MemFile\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFile\Headers\FileRecords.h">
+      <Filter>MemFile\Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
