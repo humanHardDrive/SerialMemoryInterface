@@ -8,8 +8,6 @@
 #include <map>
 #include <fstream>
 
-#include "FileRecords.h"
-
 #ifndef UNITIALIZED_DATA
 #define UNITIALIZED_DATA	0x00
 #endif
@@ -118,32 +116,6 @@ public:
 	uint64_t size() { return m_Size; }
 
 private:
-	enum class HEX_PARSE_STATE
-	{
-		START_CODE = 0,
-		BYTE_COUNT,
-		ADDRESS,
-		RECORD_TYPE,
-		DATA,
-		CHECKSUM
-	};
-
-	static const uint8_t HEX_RECORD_TYPE_DATA = 0;
-	static const uint8_t HEX_RECORD_TYPE_EOF = 1; /*End of file*/
-	static const uint8_t HEX_RECORD_TYPE_ESA = 2; /*Extended segment address*/
-	static const uint8_t HEX_RECORD_TYPE_SSA = 3; /*Start segment address*/
-	static const uint8_t HEX_RECORD_TYPE_ELA = 4; /*Extended linear address*/
-	static const uint8_t HEX_RECORD_TYPE_SLA = 5; /*Start linear address*/
-
-	std::map<HEX_PARSE_STATE, size_t> HEX_PARSER = {
-		{HEX_PARSE_STATE::START_CODE, 1},
-		{HEX_PARSE_STATE::BYTE_COUNT, 2},
-		{HEX_PARSE_STATE::ADDRESS, 4},
-		{HEX_PARSE_STATE::RECORD_TYPE, 2},
-		{HEX_PARSE_STATE::DATA, 0}, /*This is set to the correct length later*/
-		{HEX_PARSE_STATE::CHECKSUM, 2}
-	};
-
 	enum class S_PARSE_STATE
 	{
 		START_CODE = 0
@@ -157,7 +129,6 @@ private:
 	void clear();
 
 	void loadHexFile(std::ifstream& file);
-	void parseHexRecords(std::queue<HexRecord>& records);
 
 	void loadSFile(std::ifstream& file);
 

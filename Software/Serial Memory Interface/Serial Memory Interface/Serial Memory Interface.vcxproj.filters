@@ -48,6 +48,12 @@
     <ClCompile Include="MemFile\MemFile.cpp">
       <Filter>MemFile</Filter>
     </ClCompile>
+    <ClCompile Include="MemFile\HexParser.cpp">
+      <Filter>MemFile</Filter>
+    </ClCompile>
+    <ClCompile Include="MemFile\ParserBase.cpp">
+      <Filter>MemFile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\SerialMemoryApp.h">
@@ -77,10 +83,10 @@
     <ClInclude Include="MemFile\Headers\MemFile.h">
       <Filter>MemFile\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="MemFile\Headers\ParserException.h">
+    <ClInclude Include="MemFile\Headers\HexParser.h">
       <Filter>MemFile\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="MemFile\Headers\FileRecords.h">
+    <ClInclude Include="MemFile\Headers\ParserBase.h">
       <Filter>MemFile\Headers</Filter>
     </ClInclude>
   </ItemGroup>

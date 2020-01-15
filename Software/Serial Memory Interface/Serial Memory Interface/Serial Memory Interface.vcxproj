@@ -130,7 +130,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MemFile\HexParser.cpp" />
     <ClCompile Include="MemFile\MemFile.cpp" />
+    <ClCompile Include="MemFile\ParserBase.cpp" />
     <ClCompile Include="Source\ControlInterface.cpp" />
     <ClCompile Include="Source\NetworkInterface.cpp" />
     <ClCompile Include="Source\SerialInterface.cpp" />
@@ -147,9 +149,9 @@
     <ClInclude Include="Headers\SerialMemoryApp.h" />
     <ClInclude Include="Headers\SerialMemoryFrame.h" />
     <ClInclude Include="Headers\ThreadBase.h" />
-    <ClInclude Include="MemFile\Headers\FileRecords.h" />
+    <ClInclude Include="MemFile\Headers\HexParser.h" />
     <ClInclude Include="MemFile\Headers\MemFile.h" />
-    <ClInclude Include="MemFile\Headers\ParserException.h" />
+    <ClInclude Include="MemFile\Headers\ParserBase.h" />
     <ClInclude Include="UI\MemoryViewBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
