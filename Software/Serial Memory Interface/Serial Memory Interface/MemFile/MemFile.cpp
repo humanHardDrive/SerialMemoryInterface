@@ -1,5 +1,6 @@
 #include "MemFile.h"
-#include "ParserBase.h"
+#include "HexParser.h"
+#include "SParser.h"
 
 #include <algorithm>
 /*This is used for endianness conversion*/
@@ -67,13 +68,17 @@ void MemFile::load(const std::string & sFilePath)
 	{
 		std::string sExt = sFilePath.substr(dotIndex + 1);
 		std::ifstream file(sFilePath);
+		std::shared_ptr<ParserBase> pParser;
 
 		if (sExt == "s")
-			loadSFile(file);
+			pParser = std::make_shared<SParser>();
 		else if (sExt == "hex")
-			loadHexFile(file);
+			pParser = std::make_shared<HexParser>();
 		else
 			throw NoParserException(sExt);
+
+		if (pParser)
+			pParser->load(file, m_Blocks);
 
 		mergeBlocks();
 	}

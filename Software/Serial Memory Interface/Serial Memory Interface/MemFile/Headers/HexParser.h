@@ -6,9 +6,6 @@ class HexParser : public ParserBase
 public:
 	void load(std::ifstream& file, std::vector<MemBlock>& aBlocks);
 
-protected:
-	void mergeBlocks(std::vector<MemBlock>& aBlocks);
-
 private:
 	enum class HEX_PARSE_STATE
 	{

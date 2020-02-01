@@ -133,6 +133,7 @@
     <ClCompile Include="MemFile\HexParser.cpp" />
     <ClCompile Include="MemFile\MemFile.cpp" />
     <ClCompile Include="MemFile\ParserBase.cpp" />
+    <ClCompile Include="MemFile\SParser.cpp" />
     <ClCompile Include="Source\ControlInterface.cpp" />
     <ClCompile Include="Source\NetworkInterface.cpp" />
     <ClCompile Include="Source\SerialInterface.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="MemFile\Headers\HexParser.h" />
     <ClInclude Include="MemFile\Headers\MemFile.h" />
     <ClInclude Include="MemFile\Headers\ParserBase.h" />
+    <ClInclude Include="MemFile\Headers\SParser.h" />
     <ClInclude Include="UI\MemoryViewBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

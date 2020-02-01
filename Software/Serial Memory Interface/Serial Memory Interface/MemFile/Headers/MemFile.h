@@ -128,10 +128,6 @@ private:
 
 	void clear();
 
-	void loadHexFile(std::ifstream& file);
-
-	void loadSFile(std::ifstream& file);
-
 	void mergeBlocks();
 	bool areBlocksAdj(MemBlock& a, MemBlock& b);
 

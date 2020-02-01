@@ -54,6 +54,9 @@
     <ClCompile Include="MemFile\ParserBase.cpp">
       <Filter>MemFile</Filter>
     </ClCompile>
+    <ClCompile Include="MemFile\SParser.cpp">
+      <Filter>MemFile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\SerialMemoryApp.h">
@@ -87,6 +90,9 @@
       <Filter>MemFile\Headers</Filter>
     </ClInclude>
     <ClInclude Include="MemFile\Headers\ParserBase.h">
+      <Filter>MemFile\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFile\Headers\SParser.h">
       <Filter>MemFile\Headers</Filter>
     </ClInclude>
   </ItemGroup>
