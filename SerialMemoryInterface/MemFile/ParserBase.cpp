@@ -1,6 +1,6 @@
 #include "ParserBase.h"
 
-void ParserBase::mergeBlocks(std::vector<MemBlock>& aBlocks)
+void ParserBase::mergeBlocks(std::vector<MemBlock>& /*aBlocks*/)
 {
 }
 

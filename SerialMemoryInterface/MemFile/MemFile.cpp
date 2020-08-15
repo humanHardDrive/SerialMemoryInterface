@@ -49,7 +49,7 @@ void MemBlock::append(uint64_t addr, uint8_t * pData, size_t size)
 }
 
 /*Harder case*/
-void MemBlock::prepend(uint64_t addr, uint8_t * pData, size_t size)
+void MemBlock::prepend(uint64_t /*addr*/, uint8_t * /*pData*/, size_t /*size*/)
 {
 }
 
@@ -96,8 +96,6 @@ void MemFile::clear()
 to their starting address*/
 void MemFile::mergeBlocks()
 {
-	size_t sampleIndex = 0;
-
 	for (size_t i = 0; i < m_Blocks.size() - 1;)
 	{
 		/*Check if the two blocks touch*/
