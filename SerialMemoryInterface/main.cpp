@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "MemFile.h"
+
 int main(int argc, char** argv)
 {
 	std::cout << "Args: " << argc << std::endl;

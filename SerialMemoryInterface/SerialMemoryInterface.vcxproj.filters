@@ -13,10 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="MemFile">
+      <UniqueIdentifier>{4b3d19a1-f3c6-4eec-bcbc-07429439e1c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MemFile\Headers">
+      <UniqueIdentifier>{dd1858f5-7631-4a5d-ab4b-6510a229f0af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MemFile\HexParser.cpp">
+      <Filter>MemFile</Filter>
+    </ClCompile>
+    <ClCompile Include="MemFile\MemFile.cpp">
+      <Filter>MemFile</Filter>
+    </ClCompile>
+    <ClCompile Include="MemFile\ParserBase.cpp">
+      <Filter>MemFile</Filter>
+    </ClCompile>
+    <ClCompile Include="MemFile\SParser.cpp">
+      <Filter>MemFile</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MemFile\Headers\HexParser.h">
+      <Filter>MemFile\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFile\Headers\MemFile.h">
+      <Filter>MemFile\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFile\Headers\ParserBase.h">
+      <Filter>MemFile\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemFile\Headers\SParser.h">
+      <Filter>MemFile\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

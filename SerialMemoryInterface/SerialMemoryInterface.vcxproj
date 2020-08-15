@@ -69,7 +69,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(BOOST_PATH);./MemFile/Headers;./Headers;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(BOOST_PATH);./MemFile/Headers;./Headers;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -124,6 +129,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MemFile\HexParser.cpp" />
+    <ClCompile Include="MemFile\MemFile.cpp" />
+    <ClCompile Include="MemFile\ParserBase.cpp" />
+    <ClCompile Include="MemFile\SParser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MemFile\Headers\HexParser.h" />
+    <ClInclude Include="MemFile\Headers\MemFile.h" />
+    <ClInclude Include="MemFile\Headers\ParserBase.h" />
+    <ClInclude Include="MemFile\Headers\SParser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
