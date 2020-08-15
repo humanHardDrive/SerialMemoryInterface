@@ -1,10 +1,14 @@
 #include <iostream>
+#include "boost/asio.hpp"
 
+#include "CommInterface.h"
 #include "MemFile.h"
 
 int main(int argc, char** argv)
 {
 	MemFile file;
+	boost::asio::io_context io;
+	CommInterface serialInterface("COM3", io);
 
 	std::cout << "Args: " << argc << std::endl;
 	for (int i = 0; i < argc; i++)
@@ -22,6 +26,9 @@ int main(int argc, char** argv)
 			std::cout << e.what() << std::endl;
 		}
 	}
+
+	serialInterface.run();
+	io.run();
 
 	return 0;
 }

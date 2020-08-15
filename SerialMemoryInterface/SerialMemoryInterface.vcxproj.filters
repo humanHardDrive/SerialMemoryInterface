@@ -36,6 +36,9 @@
     <ClCompile Include="MemFile\SParser.cpp">
       <Filter>MemFile</Filter>
     </ClCompile>
+    <ClCompile Include="CommInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemFile\Headers\HexParser.h">
@@ -49,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="MemFile\Headers\SParser.h">
       <Filter>MemFile\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\CommInterface.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

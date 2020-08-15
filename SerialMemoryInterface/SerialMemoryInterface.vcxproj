@@ -71,9 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(BOOST_PATH);./MemFile/Headers;./Headers;$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_PATH)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(BOOST_PATH);./MemFile/Headers;./Headers;$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_PATH)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -86,6 +88,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,6 +118,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommInterface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemFile\HexParser.cpp" />
     <ClCompile Include="MemFile\MemFile.cpp" />
@@ -145,6 +150,7 @@
     <ClCompile Include="MemFile\SParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\CommInterface.h" />
     <ClInclude Include="MemFile\Headers\HexParser.h" />
     <ClInclude Include="MemFile\Headers\MemFile.h" />
     <ClInclude Include="MemFile\Headers\ParserBase.h" />
