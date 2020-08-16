@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <chrono>
 
 #include "boost/asio.hpp"
 #include "boost/asio/serial_port.hpp"
@@ -30,6 +31,7 @@ private:
 	std::string m_sDeviceName;
 	uint8_t m_SerialBuf[128];
 
+	std::chrono::system_clock::time_point m_LastCommTime;
 	MessageHeader m_CurrentMessageHeader;
 	uint8_t* m_pCurrentMessageHeader;
 	uint8_t* m_pCurrentMessage;

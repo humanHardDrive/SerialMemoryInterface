@@ -10,10 +10,12 @@ int main(int argc, char** argv)
 	boost::asio::io_context io;
 	CommInterface serialInterface("COM3", io);
 
+#ifdef _DEBUG
 	std::cout << "Args: " << argc << std::endl;
 	for (int i = 0; i < argc; i++)
 		std::cout << argv[i] << std::endl;
 	std::cout << std::endl;
+#endif
 
 	if (argc > 1)
 	{

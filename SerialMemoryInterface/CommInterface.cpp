@@ -31,7 +31,14 @@ void CommInterface::run()
 #ifdef _DEBUG
 			std::cout << "Got " << nBytesCount << " bytes" << std::endl;
 #endif
+			//Reset the message processing state if there's a large gap between messages
+			if (std::chrono::system_clock::now() - m_LastCommTime > std::chrono::milliseconds(5))
+				m_pCurrentMessageHeader = nullptr;
+
+			//Process received data
 			stateProcess(nBytesCount);
+			//Update the last communication time
+			m_LastCommTime = std::chrono::system_clock::now();
 		});
 	}
 	else
