@@ -57,7 +57,7 @@ void CommInterface::stateProcess(size_t nBytes)
 	for(size_t i = 0; i < nBytes; i++)
 	{
 		//Start of a new message
-		if (!m_pCurrentMessageHeader)
+		if (!m_pCurrentMessageHeader && m_SerialBuf[i] == SERIAL_STX)
 		{
 #ifdef _DEBUG
 			std::cout << "New message" << std::endl;

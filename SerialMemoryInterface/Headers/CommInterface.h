@@ -19,7 +19,8 @@ public:
 private:
 	void stateProcess(size_t nBytes);
 
-	static const uint8_t SERIAL_ETX = 0xAA;
+	static const uint8_t SERIAL_STX = 0xAA;
+	static const uint8_t SERIAL_ETX = 0x55;
 
 	struct MessageHeader
 	{
