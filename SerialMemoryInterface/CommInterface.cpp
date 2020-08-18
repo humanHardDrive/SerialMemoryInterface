@@ -52,6 +52,58 @@ void CommInterface::stop()
 {
 }
 
+void CommInterface::sendMessage(uint8_t /*cmdType*/, size_t /*nBytes*/, void * /*pBuf*/)
+{
+}
+
+//For messages like write that have a header and a separate stream of data, this function
+//can be used to stitch all the buffers together to avoid more malloc
+void CommInterface::sendMessage(uint8_t cmdType, size_t nCount, std::initializer_list<size_t> nBytes, std::initializer_list<void*> pBuf)
+{
+	uint8_t* pSendBuf;
+	size_t nSendSize, nTotalSize;
+
+	//Figure out the total size of all the parts
+	nTotalSize = 0;
+	for (size_t i = 0; i < nCount; i++)
+		nTotalSize += nBytes.begin()[i];
+
+	//Stitch the message together
+	for (size_t i = 0; i < nCount; i++)
+	{
+		nSendSize = nBytes.begin()[i];
+
+		if (i == 0) //First message prepend the header and STX
+			nSendSize += 1 + sizeof(MessageHeader);
+		else if (i == (nCount - 1)) //Last message append the ETX
+			nSendSize += 1;
+
+		//Allocate buffer to send
+		pSendBuf = (uint8_t*)malloc(nSendSize);
+
+		if (i == 0) //Copy in the STX, message header, and message
+		{
+			MessageHeader header;
+			header.cmd = cmdType;
+			header.len = (uint32_t)nTotalSize;
+
+			pSendBuf[0] = SERIAL_STX;
+			memcpy(&pSendBuf[1], &header, sizeof(MessageHeader));
+			memcpy(&pSendBuf[1 + sizeof(MessageHeader)], pBuf.begin()[i], nBytes.begin()[i]);
+		}
+		else if (i == (nCount - 1)) //Copy in the message and ETX
+		{
+			memcpy(pSendBuf, pBuf.begin()[i], nBytes.begin()[i]);
+			pSendBuf[nBytes.begin()[i]] = SERIAL_ETX;
+		}
+		else //Just copy the message
+			memcpy(pSendBuf, pBuf.begin()[i], nBytes.begin()[i]);
+
+		boost::asio::write(m_SerialPort, boost::asio::buffer(pSendBuf, nTotalSize + 2 + sizeof(MessageHeader)));
+		free(pSendBuf);
+	}
+}
+
 void CommInterface::asyncReadCallback(const boost::system::error_code & /*errorCode*/, size_t nBytesCount)
 {
 #ifdef _DEBUG
@@ -177,13 +229,7 @@ bool CommInterface::processRead(uint8_t c)
 		{
 			ReadWriteMsg* pMsg = (ReadWriteMsg*)m_pCurrentMessage;
 
-			//Do an async write
-			boost::asio::async_write(m_SerialPort, boost::asio::buffer(m_SerialBuf, pMsg->len),
-				[this](const boost::system::error_code& errorCode, size_t nBytesCount)
-			{
-				asyncWriteCallback(errorCode, nBytesCount);
-			});
-
+			sendMessage(static_cast<uint8_t>(CmdType::WRITE), 2, {sizeof(ReadWriteMsg), pMsg->len}, {pMsg, m_SerialBuf});
 			//Clean up current message
 			free(pMsg);
 

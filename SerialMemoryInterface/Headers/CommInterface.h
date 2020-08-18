@@ -9,6 +9,20 @@
 
 #include "MemFile.h"
 
+#pragma pack(1)
+enum CmdType
+{
+	READ = 0,
+	WRITE,
+	ALL_CMD
+};
+
+struct ReadWriteMsg
+{
+	uint32_t startAddr;
+	uint32_t len;
+};
+
 class CommInterface
 {
 public:
@@ -17,6 +31,9 @@ public:
 
 	void run();
 	void stop();
+
+	void sendMessage(uint8_t cmdType, size_t nBytes, void* pBuf);
+	void sendMessage(uint8_t cmdType, size_t nCount, std::initializer_list<size_t> nBytes, std::initializer_list<void*> pBuf);
 
 private:
 	void asyncReadCallback(const boost::system::error_code& errorCode, size_t nBytesCount);
@@ -31,24 +48,9 @@ private:
 	static const uint8_t SERIAL_STX = 0xAA;
 	static const uint8_t SERIAL_ETX = 0x55;
 
-#pragma pack(1)
 	struct MessageHeader
 	{
 		uint8_t cmd;
-		uint32_t len;
-	};
-
-
-	enum CmdType
-	{
-		READ = 0,
-		WRITE,
-		ALL_CMD
-	};
-
-	struct ReadWriteMsg
-	{
-		uint32_t startAddr;
 		uint32_t len;
 	};
 
