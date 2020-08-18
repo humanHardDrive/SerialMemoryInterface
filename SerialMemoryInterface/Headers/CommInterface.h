@@ -18,6 +18,8 @@ public:
 	void stop();
 
 private:
+	void asyncReadCallback(const boost::system::error_code& errorCode, size_t nBytesCount);
+
 	void stateProcess(size_t nBytes);
 
 	bool processRead(uint8_t c);

@@ -30,19 +30,9 @@ void CommInterface::run()
 
 		/*Setup the asynchronous reads*/
 		boost::asio::async_read(m_SerialPort, boost::asio::buffer(m_SerialBuf), boost::asio::transfer_at_least(1), 
-			[this](const boost::system::error_code& /*errorCode*/, size_t nBytesCount)
+			[this](const boost::system::error_code& errorCode, size_t nBytesCount)
 		{
-#ifdef _DEBUG
-			std::cout << "Got " << nBytesCount << " bytes" << std::endl;
-#endif
-			//Reset the message processing state if there's a large gap between messages
-			if (std::chrono::system_clock::now() - m_LastCommTime > std::chrono::milliseconds(5))
-				m_pCurrentMessageHeader = nullptr;
-
-			//Process received data
-			stateProcess(nBytesCount);
-			//Update the last communication time
-			m_LastCommTime = std::chrono::system_clock::now();
+			asyncReadCallback(errorCode, nBytesCount);
 		});
 	}
 	else
@@ -54,6 +44,32 @@ void CommInterface::run()
 
 void CommInterface::stop()
 {
+}
+
+void CommInterface::asyncReadCallback(const boost::system::error_code & /*errorCode*/, size_t nBytesCount)
+{
+#ifdef _DEBUG
+	std::cout << "Got " << nBytesCount << " bytes" << std::endl;
+#endif
+	//Reset the message processing state if there's a large gap between messages
+	if (std::chrono::system_clock::now() - m_LastCommTime > std::chrono::milliseconds(5))
+		m_pCurrentMessageHeader = nullptr;
+
+	//Process received data
+	stateProcess(nBytesCount);
+	//Update the last communication time
+	m_LastCommTime = std::chrono::system_clock::now();
+
+	//Treat a 0 byte read as the port closing
+	if (nBytesCount)
+	{
+		//Start another async read
+		boost::asio::async_read(m_SerialPort, boost::asio::buffer(m_SerialBuf), boost::asio::transfer_at_least(1),
+			[this](const boost::system::error_code& errorCode, size_t nBytesCount)
+		{
+			asyncReadCallback(errorCode, nBytesCount);
+		});
+	}
 }
 
 void CommInterface::stateProcess(size_t nBytes)
@@ -75,7 +91,7 @@ void CommInterface::stateProcess(size_t nBytes)
 				m_pCurrentMessage = nullptr; //Reset the message data pointer
 			}
 
-			//Reset processing function flagss
+			//Reset processing function flags
 			m_CurrentProcessFn = std::function<bool(uint8_t)>();
 			m_bDoneProcessing = false;
 		}
