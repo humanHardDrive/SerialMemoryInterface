@@ -84,6 +84,13 @@ void CommInterface::asyncReadCallback(const boost::system::error_code & /*errorC
 	}
 }
 
+void CommInterface::asyncWriteCallback(const boost::system::error_code & /*errorCode*/, size_t nBytesCount)
+{
+#ifdef _DEBUG
+	std::cout << "Wrote " << nBytesCount << " bytes" << std::endl;
+#endif
+}
+
 void CommInterface::stateProcess(size_t nBytes)
 {
 	for(size_t i = 0; i < nBytes; i++)
@@ -112,7 +119,7 @@ void CommInterface::stateProcess(size_t nBytes)
 		{
 #ifdef _DEBUG
 			if (!m_pCurrentMessage)
-				std::cout << "Processing message cmd=" << m_CurrentMessageHeader.cmd << " length=" << m_CurrentMessageHeader.len << std::endl;
+				std::cout << "Processing message cmd=" << (int)m_CurrentMessageHeader.cmd << " length=" << m_CurrentMessageHeader.len << std::endl;
 #endif
 			//Grab the right processing function
 			if (!m_CurrentProcessFn)
@@ -168,8 +175,19 @@ bool CommInterface::processRead(uint8_t c)
 		else
 		//Send data back to device
 		{
-			//TODO:
-			//Send back data
+			ReadWriteMsg* pMsg = (ReadWriteMsg*)m_pCurrentMessage;
+
+			//Do an async write
+			boost::asio::async_write(m_SerialPort, boost::asio::buffer(m_SerialBuf, pMsg->len),
+				[this](const boost::system::error_code& errorCode, size_t nBytesCount)
+			{
+				asyncWriteCallback(errorCode, nBytesCount);
+			});
+
+			//Clean up current message
+			free(pMsg);
+
+			//Return that processing has completed
 			return true;
 		}
 	}

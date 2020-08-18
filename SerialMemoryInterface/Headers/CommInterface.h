@@ -20,6 +20,7 @@ public:
 
 private:
 	void asyncReadCallback(const boost::system::error_code& errorCode, size_t nBytesCount);
+	void asyncWriteCallback(const boost::system::error_code& errorCode, size_t nBytesCount);
 
 	void stateProcess(size_t nBytes);
 
