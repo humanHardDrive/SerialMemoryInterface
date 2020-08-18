@@ -9,6 +9,10 @@ CommInterface::CommInterface(const std::string& sDeviceName, boost::asio::io_con
 	m_pCurrentMessageHeader(nullptr),
 	m_pCurrentMessage(nullptr)
 {
+	m_ProcessFnMap[CmdType::READ] = [this](uint8_t c) { return processRead(c); };
+	m_ProcessFnMap[CmdType::WRITE] = [this](uint8_t c) { return processWrite(c); };
+	//This function needs to always exist;
+	m_ProcessFnMap[CmdType::ALL_CMD] = [this](uint8_t c) { return invalidProcess(c); };
 }
 
 void CommInterface::run()
@@ -64,7 +68,16 @@ void CommInterface::stateProcess(size_t nBytes)
 #endif
 			memset(&m_CurrentMessageHeader, 0, sizeof(MessageHeader));
 			m_pCurrentMessageHeader = (uint8_t*)&m_CurrentMessageHeader;
-			m_pCurrentMessage = nullptr; //Reset the message data pointer
+
+			if (m_pCurrentMessage)
+			{
+				free(m_pCurrentMessage);
+				m_pCurrentMessage = nullptr; //Reset the message data pointer
+			}
+
+			//Reset processing function flagss
+			m_CurrentProcessFn = std::function<bool(uint8_t)>();
+			m_bDoneProcessing = false;
 		}
 		//All of the data for the header has been collected
 		else if (m_pCurrentMessageHeader && ((uint8_t*)&m_CurrentMessageHeader + sizeof(MessageHeader)) == m_pCurrentMessageHeader)
@@ -73,11 +86,21 @@ void CommInterface::stateProcess(size_t nBytes)
 			if (!m_pCurrentMessage)
 				std::cout << "Processing message cmd=" << m_CurrentMessageHeader.cmd << " length=" << m_CurrentMessageHeader.len << std::endl;
 #endif
-			if (m_aProcessingFn[m_CurrentMessageHeader.cmd])
-				m_aProcessingFn[m_CurrentMessageHeader.cmd](m_SerialBuf[i]);
+			//Grab the right processing function
+			if (!m_CurrentProcessFn)
+			{
+				if (m_ProcessFnMap.find(static_cast<CmdType>(m_CurrentMessageHeader.cmd)) != m_ProcessFnMap.end())
+					m_CurrentProcessFn = m_ProcessFnMap[static_cast<CmdType>(m_CurrentMessageHeader.cmd)];
+				else
+					m_CurrentProcessFn = m_ProcessFnMap[CmdType::ALL_CMD];
+			}
+
+			//Hand data over to the processing function
+			if(!m_bDoneProcessing)
+				m_bDoneProcessing = m_CurrentProcessFn(m_SerialBuf[i]);
 
 			//Use an ETX to call the processing function at least once (for 0 length messages)
-			if (!m_pCurrentMessageHeader && m_SerialBuf[i] == SERIAL_ETX)
+			if (!m_CurrentMessageHeader.len && m_SerialBuf[i] == SERIAL_ETX)
 			{
 				m_pCurrentMessageHeader = nullptr; //Reset the message header pointer
 #ifdef _DEBUG
@@ -94,4 +117,69 @@ void CommInterface::stateProcess(size_t nBytes)
 			m_pCurrentMessageHeader++;
 		}
 	}
+}
+
+bool CommInterface::processRead(uint8_t c)
+{
+	if (!m_pCurrentMessage)
+	{
+		//Allocate space for the message information
+		m_pCurrentMessage = (uint8_t*)malloc(sizeof(ReadWriteMsg));
+		//Set the write pointer at the start of the message
+		m_pCurrentMessageIndex = m_pCurrentMessage;
+	}
+	
+	if(m_pCurrentMessage)
+	{
+		//Stuff data into the message
+		if ((m_pCurrentMessage + sizeof(ReadWriteMsg)) < m_pCurrentMessageIndex)
+		{
+			*m_pCurrentMessageIndex = c;
+			m_pCurrentMessageIndex++;
+		}
+		else
+		//Send data back to device
+		{
+			//TODO:
+			//Send back data
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CommInterface::processWrite(uint8_t c)
+{
+	if (!m_pCurrentMessage)
+	{
+		//Allocate space for the message information
+		m_pCurrentMessage = (uint8_t*)malloc(sizeof(ReadWriteMsg));
+		//Set the write pointer at the start of the message
+		m_pCurrentMessageIndex = m_pCurrentMessage;
+	}
+
+	if (m_pCurrentMessage)
+	{
+		//Stuff data into message
+		if ((m_pCurrentMessage + sizeof(ReadWriteMsg)) < m_pCurrentMessageIndex)
+		{
+			*m_pCurrentMessageIndex = c;
+			m_pCurrentMessageIndex++;
+		}
+		//All of the data has been written back into memory file
+		else if(!m_CurrentMessageHeader.len)
+		{
+			return true;
+		}
+		//Write data back to memfile
+	}
+
+	return false;
+}
+
+bool CommInterface::invalidProcess(uint8_t)
+{
+	//Does nothing
+	return true;
 }

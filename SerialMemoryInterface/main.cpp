@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 {
 	MemFile file;
 	boost::asio::io_context io;
-	CommInterface serialInterface("COM3", io);
+	CommInterface serialInterface("COM6", io);
 
 #ifdef _DEBUG
 	std::cout << "Args: " << argc << std::endl;
