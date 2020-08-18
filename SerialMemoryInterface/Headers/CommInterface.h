@@ -13,6 +13,7 @@ class CommInterface
 {
 public:
 	CommInterface(const std::string& sDeviceName, boost::asio::io_context& ioContext);
+	~CommInterface();
 
 	void run();
 	void stop();

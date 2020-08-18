@@ -15,6 +15,12 @@ CommInterface::CommInterface(const std::string& sDeviceName, boost::asio::io_con
 	m_ProcessFnMap[CmdType::ALL_CMD] = [this](uint8_t c) { return invalidProcess(c); };
 }
 
+CommInterface::~CommInterface()
+{
+	if (m_pCurrentMessage)
+		free(m_pCurrentMessage);
+}
+
 void CommInterface::run()
 {
 	m_SerialPort.open(m_sDeviceName);
@@ -52,8 +58,14 @@ void CommInterface::asyncReadCallback(const boost::system::error_code & /*errorC
 	std::cout << "Got " << nBytesCount << " bytes" << std::endl;
 #endif
 	//Reset the message processing state if there's a large gap between messages
-	if (std::chrono::system_clock::now() - m_LastCommTime > std::chrono::milliseconds(5))
+	if (m_pCurrentMessageHeader &&
+		std::chrono::system_clock::now() - m_LastCommTime > std::chrono::milliseconds(5))
+	{
 		m_pCurrentMessageHeader = nullptr;
+#ifdef _DEBUG
+		std::cout << "Message timeout. Resetting" << std::endl;
+#endif
+	}
 
 	//Process received data
 	stateProcess(nBytesCount);
@@ -148,7 +160,7 @@ bool CommInterface::processRead(uint8_t c)
 	if(m_pCurrentMessage)
 	{
 		//Stuff data into the message
-		if ((m_pCurrentMessage + sizeof(ReadWriteMsg)) < m_pCurrentMessageIndex)
+		if (m_pCurrentMessageIndex < (m_pCurrentMessage + sizeof(ReadWriteMsg)))
 		{
 			*m_pCurrentMessageIndex = c;
 			m_pCurrentMessageIndex++;
