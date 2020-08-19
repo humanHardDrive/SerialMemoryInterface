@@ -4,7 +4,7 @@
 class HexParser : public ParserBase
 {
 public:
-	void load(std::ifstream& file, std::vector<MemBlock>& aBlocks);
+	void load(std::ifstream& file, uint8_t* pFile);
 
 private:
 	enum class HEX_PARSE_STATE
@@ -74,7 +74,7 @@ private:
 		}
 	};
 
-	void parseRecords(std::queue<HexRecord>& records, std::vector<MemBlock>& aBlocks);
+	void parseRecords(std::queue<HexRecord>& records, uint8_t* pFile);
 };
 
 class InvalidHexStartTokenException : public std::exception

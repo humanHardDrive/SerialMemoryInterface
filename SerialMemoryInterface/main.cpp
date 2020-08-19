@@ -6,7 +6,7 @@
 
 int main(int argc, char** argv)
 {
-	MemFile file;
+	MemFile file(32768);
 	boost::asio::io_context io;
 	CommInterface serialInterface("COM6", io);
 

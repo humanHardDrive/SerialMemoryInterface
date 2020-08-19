@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-void HexParser::load(std::ifstream & file, std::vector<MemBlock>& aBlocks)
+void HexParser::load(std::ifstream& file, uint8_t* pFile)
 {
 	char buf[2 * 256];
 
@@ -69,13 +69,13 @@ void HexParser::load(std::ifstream & file, std::vector<MemBlock>& aBlocks)
 
 		file.close();
 
-		parseRecords(records, aBlocks);
+		parseRecords(records, pFile);
 	}
 	else
 		throw FileNotFoundException();
 }
 
-void HexParser::parseRecords(std::queue<HexRecord>& records, std::vector<MemBlock>& aBlocks)
+void HexParser::parseRecords(std::queue<HexRecord>& records, uint8_t* pFile)
 {
 	bool bEndFound = false;
 	uint64_t addressOffset = 0;
@@ -89,17 +89,7 @@ void HexParser::parseRecords(std::queue<HexRecord>& records, std::vector<MemBloc
 		switch (records.front().m_Record.m_RecordType)
 		{
 		case HexRecordData::RECORD_TYPE_DATA:
-			aBlocks.push_back(MemBlock());
-			aBlocks.back().add(records.front().m_Record.m_Address + addressOffset, records.front().m_Record.m_Data, records.front().m_Record.m_Size);
-
-			std::push_heap(aBlocks.begin(), aBlocks.end(),
-				[](MemBlock a, MemBlock b)
-			{
-				if (a.startAddr() < b.startAddr())
-					return true;
-
-				return false;
-			});
+			memcpy(pFile + records.front().m_Record.m_Address + addressOffset, records.front().m_Record.m_Data, records.front().m_Record.m_Size);
 			break;
 
 			/*Shift 16*/
@@ -132,13 +122,4 @@ void HexParser::parseRecords(std::queue<HexRecord>& records, std::vector<MemBloc
 
 	if (!bEndFound)
 		throw HexEndRecordNotFoundException();
-
-	std::sort_heap(aBlocks.begin(), aBlocks.end(),
-		[](MemBlock a, MemBlock b)
-	{
-		if (a.startAddr() < b.startAddr())
-			return true;
-
-		return false;
-	});
 }

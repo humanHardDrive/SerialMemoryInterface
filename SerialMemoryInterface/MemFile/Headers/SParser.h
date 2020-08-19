@@ -5,7 +5,7 @@
 class SParser : public ParserBase
 {
 public:
-	void load(std::ifstream& file, std::vector<MemBlock>& aBlocks);
+	void load(std::ifstream& file, uint8_t* pFile);
 
 private:
 	enum class S_PARSE_STATE

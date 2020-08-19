@@ -11,11 +11,9 @@
 class ParserBase
 {
 public:
-	virtual void load(std::ifstream& file, std::vector<MemBlock>& aBlocks) = 0;
+	virtual void load(std::ifstream& file, uint8_t* pFile) = 0;
 
 protected:
-	virtual void mergeBlocks(std::vector<MemBlock>& aBlocks);
-
 	uint8_t hexToDec(char c);
 };
 
