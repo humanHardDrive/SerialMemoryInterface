@@ -148,6 +148,7 @@
     <ClCompile Include="MemFile\MemFile.cpp" />
     <ClCompile Include="MemFile\ParserBase.cpp" />
     <ClCompile Include="MemFile\SParser.cpp" />
+    <ClCompile Include="MemFile\Z80Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\CommInterface.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="MemFile\Headers\MemFile.h" />
     <ClInclude Include="MemFile\Headers\ParserBase.h" />
     <ClInclude Include="MemFile\Headers\SParser.h" />
+    <ClInclude Include="MemFile\Headers\Z80Parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
