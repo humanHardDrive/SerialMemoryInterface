@@ -1,6 +1,7 @@
 #pragma once
 #include "ParserBase.h"
 
+/*https://en.wikipedia.org/wiki/Intel_HEX*/
 class HexParser : public ParserBase
 {
 public:
