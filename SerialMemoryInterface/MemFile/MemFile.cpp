@@ -1,6 +1,7 @@
 #include "MemFile.h"
 #include "HexParser.h"
 #include "SParser.h"
+#include "Z80Parser.h"
 
 #include <algorithm>
 /*This is used for endianness conversion*/
@@ -26,13 +27,15 @@ void MemFile::load(const std::string & sFilePath)
 	if (dotIndex >= 0)
 	{
 		std::string sExt = sFilePath.substr(dotIndex + 1);
-		std::ifstream file(sFilePath);
+		std::ifstream file(sFilePath, std::ios_base::binary);
 		std::shared_ptr<ParserBase> pParser;
 
 		if (sExt == "s")
 			pParser = std::make_shared<SParser>();
 		else if (sExt == "hex")
 			pParser = std::make_shared<HexParser>();
+		else if (sExt == "z80")
+			pParser = std::make_shared<Z80Parser>();
 		else
 			throw NoParserException(sExt);
 

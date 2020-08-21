@@ -26,13 +26,14 @@ void Z80Parser::load(std::ifstream & file, uint8_t * pFile)
 				/*Copy the starting address*/
 				memcpy(&nStartAddress, buf, Z80_PARSER[state]);
 				state = Z80_PARSE_STATE::DATA;
+				pFile += nStartAddress;
 				Z80_PARSER[state] = sizeof(buf); //Setup the data read size
 				//This will continue to read until there is no data left
 				break;
 
 			case Z80_PARSE_STATE::DATA:
-				memcpy(pFile + nStartAddress, buf, Z80_PARSER[state]);
-				pFile += nStartAddress;
+				memcpy(pFile, buf, Z80_PARSER[state]);
+				pFile += Z80_PARSER[state];
 				break;
 			}
 
