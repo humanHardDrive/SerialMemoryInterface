@@ -14,4 +14,13 @@ private:
 		ADDRESS,
 		DATA
 	};
+
+	static constexpr char Z80_HEADER[8] = {'Z', '8', '0', 'A', 'S', 'M', 0x1a, 0x0a};
+
+	std::map<Z80_PARSE_STATE, size_t> Z80_PARSER = 
+	{
+		{Z80_PARSE_STATE::HEADER, 8},
+		{Z80_PARSE_STATE::ADDRESS, 2},
+		{Z80_PARSE_STATE::DATA, 0}
+	};
 };
