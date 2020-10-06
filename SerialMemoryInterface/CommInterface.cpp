@@ -198,7 +198,7 @@ void CommInterface::stateProcess(size_t nBytes)
 				m_CurrentMessageHeader.len--; //Decrement the data length
 		}
 		//Stuff data into the message header
-		else
+		else if(m_pCurrentMessageHeader)
 		{
 			*m_pCurrentMessageHeader = m_SerialBuf[i];
 			m_pCurrentMessageHeader++;
