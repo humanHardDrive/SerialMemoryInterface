@@ -3,9 +3,10 @@
 #include <exception>
 #include <iostream>
 
-CommInterface::CommInterface(const std::string& sDeviceName, boost::asio::io_context& ioContext) :
+CommInterface::CommInterface(const std::string& sDeviceName, const unsigned int nBaudRate, boost::asio::io_context& ioContext) :
 	m_SerialPort(ioContext),
 	m_sDeviceName(sDeviceName),
+	m_nBaudRate(nBaudRate),
 	m_pCurrentMessageHeader(nullptr),
 	m_pCurrentMessage(nullptr)
 {
@@ -30,7 +31,7 @@ void CommInterface::run()
 		/*TODO:
 		Get these as parameters to the interface
 		*/
-		m_SerialPort.set_option(boost::asio::serial_port::baud_rate(9600));
+		m_SerialPort.set_option(boost::asio::serial_port::baud_rate(m_nBaudRate));
 		m_SerialPort.set_option(boost::asio::serial_port::character_size(8));
 		m_SerialPort.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
 

@@ -26,7 +26,7 @@ struct ReadWriteMsg
 class CommInterface
 {
 public:
-	CommInterface(const std::string& sDeviceName, boost::asio::io_context& ioContext);
+	CommInterface(const std::string& sDeviceName, const unsigned int nBaudRate, boost::asio::io_context& ioContext);
 	~CommInterface();
 
 	void run();
@@ -56,6 +56,7 @@ private:
 
 	boost::asio::serial_port m_SerialPort;
 	std::string m_sDeviceName;
+	unsigned int m_nBaudRate;
 	uint8_t m_SerialBuf[128];
 
 	std::chrono::system_clock::time_point m_LastCommTime;

@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 
 	MemFile file(nFileSize);
 	boost::asio::io_context io;
-	CommInterface serialInterface(sPortName, io);
+	CommInterface serialInterface(sPortName, nBaudRate, io);
 
 	if (argc > 1)
 	{
