@@ -30,7 +30,7 @@ void CommInterface::run()
 		/*TODO:
 		Get these as parameters to the interface
 		*/
-		m_SerialPort.set_option(boost::asio::serial_port::baud_rate(115200));
+		m_SerialPort.set_option(boost::asio::serial_port::baud_rate(9600));
 		m_SerialPort.set_option(boost::asio::serial_port::character_size(8));
 		m_SerialPort.set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
 
@@ -99,7 +99,7 @@ void CommInterface::sendMessage(uint8_t cmdType, size_t nCount, std::initializer
 		else //Just copy the message
 			memcpy(pSendBuf, pBuf.begin()[i], nBytes.begin()[i]);
 
-		boost::asio::write(m_SerialPort, boost::asio::buffer(pSendBuf, nTotalSize + 2 + sizeof(MessageHeader)));
+		boost::asio::write(m_SerialPort, boost::asio::buffer(pSendBuf, nSendSize));
 		free(pSendBuf);
 	}
 }
@@ -232,6 +232,7 @@ bool CommInterface::processRead(uint8_t c)
 			sendMessage(static_cast<uint8_t>(CmdType::WRITE), 2, {sizeof(ReadWriteMsg), pMsg->len}, {pMsg, m_SerialBuf});
 			//Clean up current message
 			free(pMsg);
+			m_pCurrentMessage = nullptr;
 
 			//Return that processing has completed
 			return true;
